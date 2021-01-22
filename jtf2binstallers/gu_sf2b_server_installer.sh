@@ -46,7 +46,7 @@ fi
 
 echo "copy files across"
 cp ./server/api.wsgi /opt/f2bapi/api.wsgi
-cp ./server/api-cfg.py /opt/f2bapi/api-cfg.py
+cp ./server/api_cfg.py /opt/f2bapi/api_cfg.py
 
 #this just needs copied
 # api.py

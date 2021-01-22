@@ -1,0 +1,66 @@
+January 22, 2021
+jon.trinder@glasgow.ac.uk
+# rough notes on the Durham Distributed fail2ban project
+
+The original Durham installers also creates some of the pythib files. For our purposes we have created real files
+and  configuration will be done via ansible.
+
+Actual split things up so we have a basic installer that copies files to relevent destinations and a config step 
+using ansible to configure/customise.
+
+All the files could have been included in ansible as mix of "files" and "templates" but I wanted to keep actual code
+and config/installer/enviroment setup decoupled.
+
+What has also be done is where some of Durhams files had paths set as env variables these have been fixed 
+/opt/fail2ban as the target install location for the server. Mainly so I could set up a specific test system.
+For deployement anything with need of configuration has been done via ansible templates
+
+The Durham installer also sets up the python virtual env. For Glasgow setting up the virtual env setup
+is moved to ansible.
+
+Now what is where and what is it :-)
+
+What files are what in the distributed fail2ban project 
+
+#######################
+#  on the server
+#######################
+
+/opt/f2bapi/api.wsgi  configure the wsgi interface  customise for install location and contain random key for wsgi
+/opt/f2bapi/api_cfg.py mysql user/password details
+
+/opt/f2bapi/api.py the actual python code and flask paths read/write from the database
+
+
+<webserver folder> /conf.d/api.conf config to connect the wsgi application to web server
+depends which webserver you are using httpd/apache...nginx anyone?
+ 
+#######################
+# on the client
+#######################
+
+= on the client these copy across as they are =
+/etc/fail2ban/filter.d/shared-f2b-filter.conf
+/etc/fail2ban/action.d/shared-f2b-input.conf
+/etc/fail2ban/action.d/shared-f2b/get.py    code to pull from the database and add to local jail
+/etc/fail2ban/action.d/shared-f2b/input.py  code to push new miscreants to remote database
+
+# this file has to be customised 
+/etc/fail2ban/action.d/shared-f2b/shared_cfg.py contains database login detail , url of db sever and api token
+
+The api token is stored on database means identify/verify senders. This needs something a bit more secure later.
+
+#######################
+# == extras folder == #
+#######################
+base-server.sql
+sql to import into database to create f2b database and tables
+
+to create users in DB
+Ensure you create the f2b_api table and give your database user access
+e.g. - GRANT SELECT,INSERT ON f2b.f2b_api TO 'user'@'192.168.1.1' IDENTIFIED BY 'password';
+
+Durham supply a handy note for cron on client machines.
+
+* * * * * root /etc/fail2ban/action.d/shared-f2b/get.py >/dev/null 2>&1
+

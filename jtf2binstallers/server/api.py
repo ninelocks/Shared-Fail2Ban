@@ -107,7 +107,7 @@ def getcount(jail="all", count=1000, host="remote"):
 # A method to write back into the database
 @app.route('/api/v1/put', methods=['PUT'])
 def put():
-    cur2 = db.cursor(dictionary=True
+    cur2 = db.cursor(dictionary=True)
     if 'X-TOKEN' in request.headers:
         tokensql = "SELECT COUNT(*) as count FROM f2b_api WHERE `key` = '%s'" % (request.headers.get('X-TOKEN', default=None, type=str))
         cur2.execute(tokensql)
