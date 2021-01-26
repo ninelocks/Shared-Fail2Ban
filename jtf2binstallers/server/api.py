@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+# jt  change to  keeping connections within functions not attempting to share
 
 import socket
 import datetime
@@ -17,11 +18,11 @@ app.url_map.strict_slashes = False
 cache = Cache(config={'CACHE_TYPE': 'simple'})
 cache.init_app(app)
 
-db = mysql.connector.connect(
-    host=cfg.mysql["host"], user=cfg.mysql["user"], passwd=cfg.mysql["passwd"], db=cfg.mysql["db"])
 
-#cur = db.cursor(dictionary=True)
+#db = mysql.connector.connect(host=cfg.mysql["host"], user=cfg.mysql["user"], passwd=cfg.mysql["passwd"], db=cfg.mysql["db"])
 
+
+#cur = db.cursor(dictionary=True) 
 
 @app.route('/', methods=['GET'])
 @app.route('/api', methods=['GET'])
@@ -29,8 +30,6 @@ db = mysql.connector.connect(
 @cache.cached(timeout=3600)
 def about():
     return '<h3>Shared Fail2Ban API</h3><br/><strong>Paul Clark, Adam Boutcher</strong><br/>(<em>UKI-SCOTGRID-DURHAM</em>) IPPP, Durham University.<br/><br/><a href="https://github.com/bulgemonkey/Shared-Fail2Ban">https://github.com/bulgemonkey/Shared-Fail2Ban</a>'
-
-
 @app.route('/api/v1', methods=['GET'])
 @app.route('/api/v1/', methods=['GET'])
 @cache.cached(timeout=3600)
@@ -51,7 +50,9 @@ def help():
 def gettime(jail="ssh", time=1, host="remote"):
 
     #cur = mysql.connection.cursor(dictionary=True)
+    db = mysql.connector.connect(host=cfg.mysql["host"], user=cfg.mysql["user"], passwd=cfg.mysql["passwd"], db=cfg.mysql["db"])
     cur = db.cursor(dictionary=True)
+
     if host == "remote":
         try:
             host = socket.gethostbyaddr(request.remote_addr)[0]
@@ -60,20 +61,20 @@ def gettime(jail="ssh", time=1, host="remote"):
     else:
         host = "*"
 
-    filter = ""
+    filter=""
     if 'domain' in request.args:
-        filter = filter+" AND hostname like '%%%s'" % (
-            escape(request.args.get('domain', default=None, type=str)))
+        filter = filter+" AND hostname like '%%%s'" % (escape(request.args.get('domain', default=None, type=str)))
 
     jail = jail.lower()
     if filter:
-        sql = "SELECT UNIX_TIMESTAMP(created) as created, ip, port, protocol FROM f2b WHERE created>=DATE_ADD(NOW(), INTERVAL -%s HOUR) AND jail = '%s' AND hostname != '%s' %s" % (
-            int(time), escape(jail), escape(host), filter)
+        sql = "SELECT UNIX_TIMESTAMP(created) as created, ip, port, protocol FROM f2b WHERE created>=DATE_ADD(NOW(), INTERVAL -%s HOUR) AND jail = '%s' AND hostname != '%s' %s" % (int(time), escape(jail), escape(host), filter)
     else:
-        sql = "SELECT UNIX_TIMESTAMP(created) as created, ip, port, protocol FROM f2b WHERE created>=DATE_ADD(NOW(), INTERVAL -%s HOUR) AND jail = '%s' AND hostname != '%s'" % (
-            int(time), escape(jail), escape(host))
+        sql = "SELECT UNIX_TIMESTAMP(created) as created, ip, port, protocol FROM f2b WHERE created>=DATE_ADD(NOW(), INTERVAL -%s HOUR) AND jail = '%s' AND hostname != '%s'" % (int(time), escape(jail), escape(host))
     cur.execute(sql)
     row = cur.fetchall()
+    print(" ", cur.rowcount, " records read") #was bug here where it was cur referenced not cur 2
+    print("sql was ",sql)
+    cur.close()
     return jsonify(row)
 
 # These are IPs that are repeatedly bad
@@ -88,7 +89,9 @@ def gettime(jail="ssh", time=1, host="remote"):
 @cache.cached(timeout=5)
 def getcount(jail="all", count=1000, host="remote"):
     #cur = mysql.connection.cursor(dictionary=True)
+    db = mysql.connector.connect(host=cfg.mysql["host"], user=cfg.mysql["user"], passwd=cfg.mysql["passwd"], db=cfg.mysql["db"])
     cur = db.cursor(dictionary=True)
+
     if host == "remote":
         try:
             host = socket.gethostbyaddr(request.remote_addr)[0]
@@ -97,13 +100,11 @@ def getcount(jail="all", count=1000, host="remote"):
     else:
         host = "*"
 
-    filter = ""
+    filter=""
     if 'domain' in request.args:
-        filter = filter+" AND hostname like '%%%s'" % (
-            escape(request.args.get('domain', default=None, type=str)))
+        filter = filter+" AND hostname like '%%%s'" % (escape(request.args.get('domain', default=None, type=str)))
     if 'time' in request.args:
-        filter = filter+" AND created>=DATE_ADD(NOW(), INTERVAL -%d HOUR)" % (
-            request.args.get('time', default=None, type=int))
+        filter = filter+" AND created>=DATE_ADD(NOW(), INTERVAL -%d HOUR)" % (request.args.get('time', default=None, type=int))
 
     jail = jail.lower()
     if jail == "all":
@@ -112,22 +113,24 @@ def getcount(jail="all", count=1000, host="remote"):
         jailsql = "jail = '%s' AND" % (escape(jail))
 
     if filter:
-        sql = "SELECT COUNT(*) as count, ip, port, protocol FROM f2b WHERE %s hostname != '%s' %s GROUP BY ip HAVING count >= %d ORDER BY count DESC" % (
-            jailsql, escape(host), filter, int(count))
+        sql = "SELECT COUNT(*) as count, ip, port, protocol FROM f2b WHERE %s hostname != '%s' %s GROUP BY ip HAVING count >= %d ORDER BY count DESC" % (jailsql, escape(host), filter, int(count))
     else:
-        sql = "SELECT COUNT(*) as count, ip, port, protocol FROM f2b WHERE %s hostname != '%s' GROUP BY ip HAVING count >= %d ORDER BY count DESC" % (
-            jailsql, escape(host), int(count))
+        sql = "SELECT COUNT(*) as count, ip, port, protocol FROM f2b WHERE %s hostname != '%s' GROUP BY ip HAVING count >= %d ORDER BY count DESC" % (jailsql, escape(host), int(count))
     cur.execute(sql)
     row = cur.fetchall()
+    print("JT ", cur.rowcount, " records read") #was bug here where it was cur referenced not cur 2
+    cur.close()
     return jsonify(row)
 
 # A method to write back into the database
 @app.route('/api/v1/put', methods=['PUT'])
 def put():
+    rowcount = 0 #jt added to simplify close later
+    db = mysql.connector.connect(host=cfg.mysql["host"], user=cfg.mysql["user"], passwd=cfg.mysql["passwd"], db=cfg.mysql["db"])
     cur2 = db.cursor(dictionary=True)
+    #cur2 = mysql.connection.cursor(cursorclass=DictCursor)
     if 'X-TOKEN' in request.headers:
-        tokensql = "SELECT COUNT(*) as count FROM f2b_api WHERE `key` = '%s'" % (
-            request.headers.get('X-TOKEN', default=None, type=str))
+        tokensql = "SELECT COUNT(*) as count FROM f2b_api WHERE `key` = '%s'" % (request.headers.get('X-TOKEN', default=None, type=str))
         cur2.execute(tokensql)
         row = cur2.fetchall()
         if int(row[0]['count']) >= 1:
@@ -166,15 +169,15 @@ def put():
             else:
                 pbantime = request.json['bantime']
 
-            sql = "INSERT INTO f2b SET hostname = '%s', created = '%s', jail = '%s', protocol = '%s', port = '%s', ip = '%s', bantime = '%d'" % (
-                escape(phost), escape(pdate), escape(pjail), escape(pproto), escape(pport), escape(pip), int(pbantime))
+            sql = "INSERT INTO f2b SET hostname = '%s', created = '%s', jail = '%s', protocol = '%s', port = '%s', ip = '%s', bantime = '%d'" % (escape(phost), escape(pdate), escape(pjail), escape(pproto), escape(pport), escape(pip), int(pbantime))
             cur2.execute(sql)
-            db.commit()
-       	    print("PUT - SQL: ", sql, " from ", request.remote_addr)
-            # was bug here where it was cur referenced not cur 2
-            print("PUT - ", cur2.rowcount, " records inserted.")
-       	    if cur2.rowcount > 0:
-       	        return "OK"
+            db.connection.commit()
+       	    print("PUT - SQL: ",sql, " from ", request.remote_addr)
+            print("PUT - ", cur2.rowcount, " records inserted.") #was bug here where it was cur referenced not cur 2
+            rowcount = cur2.rowcount
+            cur2.close()
+       	    if rowcount > 0:
+                return "OK"
        	    else:
                 return "FAILED"
         else:
@@ -188,3 +191,4 @@ if __name__ == "__main__":
     #from waitress import serve
     #app.run(host='0.0.0.0', port=3744,debug=True);
     #serve(app, host='0.0.0.0', port=80)
+
