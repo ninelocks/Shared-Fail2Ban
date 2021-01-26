@@ -33,6 +33,10 @@ cp ./client/shared-f2b-input.conf  /etc/fail2ban/action.d/shared-f2b-input.conf
 cp ./client/get.py                 /etc/fail2ban/action.d/shared-f2b/get.py
 cp ./client/input.py               /etc/fail2ban/action.d/shared-f2b/input.py
 
+
+touch /etc/fail2ban/action.d/shared-f2b/filter.log
+
+
 #
 echo "copying config files across to fail2ban"
 cp ./client/shared_cfg.py /etc/fail2ban/action.d/shared-f2b/shared_cfg.py

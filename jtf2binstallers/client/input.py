@@ -33,18 +33,14 @@ else:
         "ip": str(sys.argv[4]),
         "bantime": str(sys.argv[5])
     }
-   
-    print(data)
     data = json.dumps(data)
     if (sys.version_info > (3, 0)):
         # Python 3 code in this block
-        
         import urllib.request
         req = urllib.request.Request(cfg.apiurl+"/put", data=bytes(data.encode("utf-8")), method='PUT')
         req.add_header("Content-type", "application/json; charset=UTF-8")
         req.add_header("X-TOKEN", cfg.apitoken)
         resp = urllib.request.urlopen(req)
-        print("got here3")
         resp = resp.read().decode('utf-8')
     else:
         # Python 2 code in this block

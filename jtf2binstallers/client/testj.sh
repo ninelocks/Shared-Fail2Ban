@@ -1,1 +1,1 @@
-python input.py thing ssh 22 192.168.1.250 200
+python input.py owls ssh 22 192.168.1.249 200

@@ -103,4 +103,4 @@ apiurl = "https://f2bapi/api/v1"
 apitoken = "blah"
 EOF
 
-echo "Finish your config in the jail.conf and shared_cfg.py"
+echo "Finish your config in the jail.conf and shared_cfg.py dont forget selinux ist evil"
