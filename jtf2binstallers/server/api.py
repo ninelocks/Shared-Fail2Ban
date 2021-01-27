@@ -75,6 +75,7 @@ def gettime(jail="ssh", time=1, host="remote"):
     print(" ", cur.rowcount, " records read") #was bug here where it was cur referenced not cur 2
     print("sql was ",sql)
     cur.close()
+    db.close()
     return jsonify(row)
 
 # These are IPs that are repeatedly bad
@@ -120,6 +121,7 @@ def getcount(jail="all", count=1000, host="remote"):
     row = cur.fetchall()
     print("JT ", cur.rowcount, " records read") #was bug here where it was cur referenced not cur 2
     cur.close()
+    db.close()
     return jsonify(row)
 
 # A method to write back into the database
@@ -176,6 +178,7 @@ def put():
             print("PUT - ", cur2.rowcount, " records inserted.") #was bug here where it was cur referenced not cur 2
             rowcount = cur2.rowcount
             cur2.close()
+            db.close()
        	    if rowcount > 0:
                 return "OK"
        	    else:
