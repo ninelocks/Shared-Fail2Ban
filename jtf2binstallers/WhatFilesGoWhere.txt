@@ -64,3 +64,9 @@ Durham supply a handy note for cron on client machines.
 
 * * * * * root /etc/fail2ban/action.d/shared-f2b/get.py >/dev/null 2>&1
 
+
+#htaccess
+https://www.namecheap.com/support/knowledgebase/article.aspx/9821/38/apache-redirect-to-https/
+
+
+

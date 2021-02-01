@@ -1,0 +1,8 @@
+AuthUserFile /var/www/html/data/.htpasswd
+
+AuthName "Protected file"
+AuthType Basic
+<Limit GET PUT PROPFIND POST DELETE HEAD>
+require valid-user
+</Limit>
+

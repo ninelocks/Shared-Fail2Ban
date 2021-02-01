@@ -1,0 +1,21 @@
+
+[jt-apache-noscript]
+enabled = true
+filter = apache-noscript
+port     = http,https
+logpath  = %(apache_error_log)s
+action = shared-f2b-input[name=WEBNS, port=http, protocol=tcp, bantime=%(bantime)s]
+	iptables[actname=HTTP, name=WEBNS, port=http, protocol=tcp]
+        iptables[actname=HTTPS, name=WEBNS, port=https, protocol=tcp]
+
+
+[sf2b-apache-noscript]
+enabled  = true
+filter   = shared-f2b-filter
+
+action   = iptables[actname=HTTP,name=BISH, port=http, protocol=tcp]
+	   iptables[actname=HTTPS,name=BASH, port=https, protocol=tcp]
+
+logpath  = /etc/fail2ban/action.d/shared-f2b/filter-http.log
+bantime = 600
+maxretry = 1
