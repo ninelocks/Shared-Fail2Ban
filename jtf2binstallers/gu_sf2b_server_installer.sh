@@ -48,11 +48,22 @@ echo "copy files across"
 cp ./server/api.wsgi /opt/f2bapi/api.wsgi
 cp ./server/api_cfg.py /opt/f2bapi/api_cfg.py
 
+
+
+
 #this just needs copied
 # api.py
 cp ./server/api.py /opt/f2bapi
 
-#finally the web server conf
+#finally the web server conf this plain one
+# the extras for te web page come from ansible at moment
 cp ./server/forwebserver/api.conf $aloc/conf.d/api.conf
 
 echo "if we got here all good, go run your ansible script"
+
+#addiotnal to show bans on a web page
+#echo "copy web oage  across..this needs improvement :-)"
+#cp ./server-webpage/f2bweb /var/www/html -r
+#mkdir for where will will put htpasswd file
+#mkdir /var/www/htdata
+ 

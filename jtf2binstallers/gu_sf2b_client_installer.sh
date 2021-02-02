@@ -34,7 +34,7 @@ cp ./client/get.py                 /etc/fail2ban/action.d/shared-f2b/get.py
 cp ./client/input.py               /etc/fail2ban/action.d/shared-f2b/input.py
 
 
-touch /etc/fail2ban/action.d/shared-f2b/filter.log
+#touch /etc/fail2ban/action.d/shared-f2b/filter.log
 
 
 #

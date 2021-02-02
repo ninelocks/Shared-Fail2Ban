@@ -5,6 +5,7 @@
 # Paul Clark, Adam Boutcher
 # github.com/bulgemonkey/Shared-Fail2Ban/
 
+
 import sys
 import json
 import argparse
@@ -38,6 +39,7 @@ def getjails(jailname):
             response = urllib.urlopen(queryline)
         data = json.loads(response.read())
     logfilename = "/etc/fail2ban/action.d/shared-f2b/filter-" + jailname + ".log"
+
     open(logfilename, "w").close()
     file = open(logfilename, "w")
     for result in data:
