@@ -50,7 +50,7 @@ $stmt->execute();
 
 echo '<table id="myTable" class="display"   cellspacing="0" width="100%">' . "\n";
 
-$header = 
+$header =
     '<tr>' . "\n" .
     ' <th></th>' . "\n" .
     ' <th>created</th>' . "\n" .
@@ -61,31 +61,32 @@ $header =
     ' <th>bantime</th>' . "\n" .
     ' <th></th>' . "\n" .
     '</tr>' . "\n";
-    
 
 echo $header;
+if ($stmt->rowCount() > 0) {
 
-foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+    foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
 
-    $created = $row['created'];
-    $jail = $row['jail'];
-    $protocol = $row['protocol'];
-    $port = $row['port'];
-    $ip = $row['ip'];
-    $bantime = $row['bantime'];
+        $created = $row['created'];
+        $jail = $row['jail'];
+        $protocol = $row['protocol'];
+        $port = $row['port'];
+        $ip = $row['ip'];
+        $bantime = $row['bantime'];
 
-    $line = '<tr>' . "\n" .
-        ' <td>   <span class="dot"></span>   </td>' . "\n" .
-        ' <td>' . $created . '</td>' . "\n" .
-        ' <td>' . $jail . '</td>' . "\n" .
-        ' <td>' . $protocol . '</td>' . "\n" .
-        ' <td>' . $port . '</td>' . "\n" .
-        ' <td>' . $ip . '</td>' . "\n" .
-        ' <td>' . $bantime . '</td>' . "\n" .
-        ' <td>   <span class="dot"></span>   </td>' . "\n" .
-        '</tr>' . "\n";
-    echo $line;
+        $line = '<tr>' . "\n" .
+            ' <td>   <span class="dot"></span>   </td>' . "\n" .
+            ' <td>' . $created . '</td>' . "\n" .
+            ' <td>' . $jail . '</td>' . "\n" .
+            ' <td>' . $protocol . '</td>' . "\n" .
+            ' <td>' . $port . '</td>' . "\n" .
+            ' <td>' . $ip . '</td>' . "\n" .
+            ' <td>' . $bantime . '</td>' . "\n" .
+            ' <td>   <span class="dot"></span>   </td>' . "\n" .
+            '</tr>' . "\n";
+        echo $line;
 
+    }
 }
 
 echo '</table>' . "\n";

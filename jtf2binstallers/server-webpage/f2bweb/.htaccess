@@ -1,4 +1,4 @@
-AuthUserFile /var/www/html/data/.htpasswd
+AuthUserFile /var/www/data/.htpasswd
 
 AuthName "Protected file"
 AuthType Basic
