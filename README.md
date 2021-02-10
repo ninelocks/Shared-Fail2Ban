@@ -7,6 +7,8 @@ This project aims to enable [Fail2Ban](https://www.fail2ban.org/) instances on i
 **Example:**
 This would then mean if Alice and Bob both share their bans and Charlie was locked out from Alice's system for too many incorrect details, Charlie would then be banned from Bob's system.
 
+By default systems will only be provided a list of bans that do not originate from themselves, for instance, Alice will not be given their own ban list back; however if Bob bans the same address at the same time (for example, a automated simultaneous attack) then Alice will be given the same address back as Bob banned it too.
+
 Fail2Ban Filters can still be applied meaning the sharing method is as robust as a standard Fail2Ban deployment.
 
 We welcome any Issues and PRs.
@@ -18,6 +20,9 @@ The authors of this project are currently **[Adam Boutcher](https://www.aboutche
 This has been developed at the Durham [GridPP](https://gridpp.ac.uk) Site (*UKI-SCOTGRID-DURHAM*) and the [Institute for Particle Physics Phenomenology](https://www.ippp.dur.ac.uk), [Durham University](https://dur.ac.uk).
 
 The work and partial works have been presented too the [WLCG](https://wlcg.web.cern.ch/) Security Operations Centre at [Cern](https://home.cern/)
+
+Other key contributors:
+ - **Jon Trinder** at Glasgow University.
 
 
 ----
@@ -60,7 +65,7 @@ This is a very brief installation method/guide; please read the Warnings and Not
 
 The files contained in this repository are currently primarily to use and develop from. They should be READ and UNDERSTOOD rather than blindly copied and deployed.
 
-In no way do we endorse the current scripts as production ready (although they are currently deployed in some producation environments), we cannot gurantee their safety, especially as these are aimed for Cyber Security deployments.
+In no way do we endorse the current scripts as production ready (although they are currently deployed in some production environments), we cannot guarantee their safety, especially as these are aimed for Cyber Security deployments.
 
 ### Notice - CentOS
 
@@ -78,4 +83,11 @@ Fail2Ban didn't support IPv6 at the time of initial development. The current sta
 
 ### Notice - Python Support
 
-The version of Fail2Ban we targeted was written in Python2 and shipped with its own python binary, some scripts will run with Python2 and Python3, some are only Python2. Your experences may vary.
+The version of Fail2Ban we targeted was written in Python2 and shipped with its own python binary, some scripts will run with Python2 and Python3, some are only Python2. Your experiences may vary.
+
+----
+### Auto Deployment
+
+Here's a list of other peoples attempts at auto deployment. They may bundle older versions of the scripts and should be used as reference only.
+- [Puppet](https://github.com/adamboutcher/Shared-Fail2Ban-Puppet)
+- [Ansible](https://github.com/ninelocks/ansible-shared-fail2ban)
