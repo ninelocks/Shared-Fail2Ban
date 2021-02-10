@@ -89,7 +89,7 @@ The version of Fail2Ban we targeted was written in Python2 and shipped with its 
 
 (end of original readme)
 
-# The differances in this fork
+# The differences in this fork
 
 I am using the project more or less as supplied by Durham but with a few local changes mainly code changes/different install mechanism/file name changes.
 
