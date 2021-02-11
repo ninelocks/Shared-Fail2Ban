@@ -2,14 +2,25 @@
 
 ## Project Outline
 
-This project aims to enable [Fail2Ban](https://www.fail2ban.org/) instances on individual systems to push the ban information of each jail to a central database allowing other systems to pull the bans to their own system.
+This project aims to enable [Fail2Ban](https://www.fail2ban.org/) instances on individual systems to push the ban information of each 
+jail to a central database allowing other systems to pull the bans to 
+their own system.
 
-**Example:**
-This would then mean if Alice and Bob both share their bans and Charlie was locked out from Alice's system for too many incorrect details, Charlie would then be banned from Bob's system.
+**Example:** This would then mean if Alice and Bob both 
+share their bans and Charlie was locked out from Alice's system for too 
+many incorrect details, Charlie would then be banned from Bob's system.
+
+By default systems will only be provided a list of bans that do not 
+originate from themselves, for instance, Alice will not be given their 
+own ban list back; however if Bob bans the same address at the same time
+ (for example, a automated simultaneous attack) then Alice will be given
+ the same address back as Bob banned it too.
 
 Fail2Ban Filters can still be applied meaning the sharing method is as robust as a standard Fail2Ban deployment.
 
 We welcome any Issues and PRs.
+
+## [](https://github.com/ninelocks/Shared-Fail2Ban/tree/moondawn#project-credits)
 
 ## Project Credits
 
@@ -19,6 +30,9 @@ This has been developed at the Durham [GridPP](https://gridpp.ac.uk) Site (*UKI-
 
 The work and partial works have been presented too the [WLCG](https://wlcg.web.cern.ch/) Security Operations Centre at [Cern](https://home.cern/)
 
+Other key contributors:
+
+- **Jon Trinder** at Glasgow University.
 
 ----
 
@@ -44,13 +58,13 @@ This is a very brief installation method/guide; please read the Warnings and Not
 3. Start mysql/mariadb
 
 ### API with Database (MySQL/MariaDB)
+
 1. Run the database scripts
 2. Create a db user for the API to use with CREATE and INSERT permissions.
 3. Run the API insatllation script
 4. Make the db changes required
 5. Start mysql/mariadb
 6. Start httpd/apache
-
 
 ----
 
@@ -94,7 +108,7 @@ Here's a list of other peoples attempts at auto deployment. They may bundle olde
 
 # The differences in this fork
 
-# (in branch 'moondawn')
+# (also see the branch 'moondawn')
 
 I am using the project more or less as supplied by Durham but with a few local changes mainly code changes/different install mechanism/file name changes.
 
