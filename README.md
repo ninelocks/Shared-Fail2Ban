@@ -7,8 +7,6 @@ This project aims to enable [Fail2Ban](https://www.fail2ban.org/) instances on i
 **Example:**
 This would then mean if Alice and Bob both share their bans and Charlie was locked out from Alice's system for too many incorrect details, Charlie would then be banned from Bob's system.
 
-By default systems will only be provided a list of bans that do not originate from themselves, for instance, Alice will not be given their own ban list back; however if Bob bans the same address at the same time (for example, a automated simultaneous attack) then Alice will be given the same address back as Bob banned it too.
-
 Fail2Ban Filters can still be applied meaning the sharing method is as robust as a standard Fail2Ban deployment.
 
 We welcome any Issues and PRs.
@@ -20,9 +18,6 @@ The authors of this project are currently **[Adam Boutcher](https://www.aboutche
 This has been developed at the Durham [GridPP](https://gridpp.ac.uk) Site (*UKI-SCOTGRID-DURHAM*) and the [Institute for Particle Physics Phenomenology](https://www.ippp.dur.ac.uk), [Durham University](https://dur.ac.uk).
 
 The work and partial works have been presented too the [WLCG](https://wlcg.web.cern.ch/) Security Operations Centre at [Cern](https://home.cern/)
-
-Other key contributors:
- - **Jon Trinder** at Glasgow University.
 
 
 ----
@@ -65,7 +60,7 @@ This is a very brief installation method/guide; please read the Warnings and Not
 
 The files contained in this repository are currently primarily to use and develop from. They should be READ and UNDERSTOOD rather than blindly copied and deployed.
 
-In no way do we endorse the current scripts as production ready (although they are currently deployed in some production environments), we cannot guarantee their safety, especially as these are aimed for Cyber Security deployments.
+In no way do we endorse the current scripts as production ready (although they are currently deployed in some producation environments), we cannot gurantee their safety, especially as these are aimed for Cyber Security deployments.
 
 ### Notice - CentOS
 
@@ -74,6 +69,7 @@ The development for this project has been on CentOS Linux 7 although some effort
 #### SELinux
 
 SELinux may break this, we wrote some modules for our environment but they have not been include in this project yet.
+
 - Fail2Ban Client - setsebool -P nis_enabled 1
 - Fail2Ban API - setsebool -P httpd_can_network_connect_db
 
@@ -85,9 +81,93 @@ Fail2Ban didn't support IPv6 at the time of initial development. The current sta
 
 The version of Fail2Ban we targeted was written in Python2 and shipped with its own python binary, some scripts will run with Python2 and Python3, some are only Python2. Your experiences may vary.
 
-----
+---
+
 ### Auto Deployment
 
 Here's a list of other peoples attempts at auto deployment. They may bundle older versions of the scripts and should be used as reference only.
+
 - [Puppet](https://github.com/adamboutcher/Shared-Fail2Ban-Puppet)
 - [Ansible](https://github.com/ninelocks/ansible-shared-fail2ban)
+
+---
+
+# The differences in this fork
+
+# (in branch 'moondawn')
+
+I am using the project more or less as supplied by Durham but with a few local changes mainly code changes/different install mechanism/file name changes.
+
+Ive added additional jails, the project , as was, handled a jail specifically for ssh. Ive added an extra jail for apache-no-script to show how to add extra jails.
+
+Modified the 'get.py' mechanism and name of the produced filter.log file which is now
+filter-NAMEOFJAIL.log
+
+get.py called with no arguments will query ssh, or pass it an argument --jail thing and it will ask for jail called 'thing' and produce logfile filter-thing.log
+
+The original installer mechanism used shell scripts and some of the config files were embedded within those scripts. I have chosen to have separate files and do the installation configuration using ansible.
+
+Added web page to show current bans.
+
+Durhams original code is in here and the customised variation is in
+
+```
+/Shared-Fail2Ban/jtf2binstallers
+```
+
+There are two installer scripts..one for client, one for the database server.
+
+These are minimal and just copy files to the relevant destinations. Ansible could have done this but I wanted to keep code files and installer config mechanism separate.
+
+An Ansible script does overwrite some of the content,
+The associated Ansible scripts are at
+
+[GitHub - ninelocks/ansible-shared-fail2ban](https://github.com/ninelocks/ansible-shared-fail2ban)
+
+Here is what is in the installer folder Shared-Fail2Ban/jtinstallers
+
+Shared-Fail2Ban/jtinstallers
+
+├── client\
+
+│ ├── get.py\
+
+│ ├── input.py\
+
+│ ├── shared_cfg.py\
+
+│ ├── shared-f2b-filter.conf\
+
+│ ├── shared-f2b-input.conf\
+
+│ └── testsending.sh\
+
+├── extras
+
+│ ├── base-server.sql\
+
+│ └── fail2ban-shared\
+
+├── f2bweb\
+
+│ └── index.php\
+
+├── gu_sf2b_client_installer.sh\
+
+├── gu_sf2b_server_installer.sh\
+
+├── server\
+
+│ ├── api_cfg.py\
+
+│ ├── api.py\
+
+│ ├── api.wsgi\
+
+│ ├── api.wsgi.tpl\
+
+│ └── forwebserver\
+
+│ └── api.conf\
+
+└── WhatFilesGoWhere\
